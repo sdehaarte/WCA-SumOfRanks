@@ -12,7 +12,21 @@ std::vector<Cuber> SorTools::loadData(const std::string& tsvFilePath) {
 }
 
 void SorTools::calculateSumOfRanks(std::vector<Cuber>& cubers) {
+    // 
+    std::map<std::string, std::vector<std::pair<std::string, double>>> eventResults;
 
+    for (auto& [event, results] : eventResults) {
+        auto compareResult = [](const auto&a, const auto& b) { return a.second < b.second; };
+        std::sort(results.begin(), results.end(), compareResult);
+        for (int i = 0; i<results.size(); ++i) {
+            for (Cuber& cuber : cubers) {
+                if (cuber.wcaId == results[i].first) {
+                    cuber.sumOfRanks += static_cast<int>(i+1);
+                    break;
+                }
+            }
+        }
+    }
 }
 
 // QuickSort function implementation (ascneding order by sumOfRanks)
