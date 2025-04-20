@@ -13,15 +13,11 @@ struct Player {
 };
 
 const std::vector<std::string> allEvents = {
-    "222_avg", "333_avg", "333bf_avg", "333fm_avg", "333ft_avg",
-    "333oh_avg","444_avg", "444bf_avg", "555_avg", "555bf_avg",
-    "666_avg","777_avg", "clock_avg", "magic_avg", "minx_avg",
-    "mmagic_avg","pyram_avg", "skewb_avg","sql_avg",
+    "222_avg", "333_avg", "333fm_avg", "333oh_avg","444_avg",
+    "555_avg", "666_avg","777_avg", "clock_avg", "minx_avg",
+    "pyram_avg", "skewb_avg","sq1_avg",
 
-    "222_single", "333_single", "333bf_single", "333fm_single", "333ft_single",
-    "333_mbf_single", "333mbo_single", "333oh_single", "444_single", "444bf_single",
-    "555_single", "555bf_single", "666_single", "777_single", "clock_single",
-    "magic_single", "minx_single", "mmagic_single", "pyram_single", "skewb_single","sql_single"
+    "333bf_single", "333_mbf_single", "444bf_single","555bf_single",
 };
 
 void parseTSVFile(const std::string& filename, std::unordered_map<std::string, Player>& players, int& maxRank, const std::string& suffix) {
