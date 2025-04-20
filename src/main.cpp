@@ -20,9 +20,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    std::cout << "test";
     std::vector<Cuber> cubers = SorTools::loadAndCalculateSumOfRanks();
-    std::cout << "test";
 
     if (mode == "sort") {
         if (sortAlgorithm == "merge") {

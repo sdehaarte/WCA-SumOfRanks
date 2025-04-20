@@ -8,7 +8,6 @@ struct Cuber {
     std::string wcaId;
     std::string name;
     int sumOfRanks;
-    std::unordered_map<std::string, size_t> eventRanks;
     Cuber() : sumOfRanks(0) {}
     Cuber(const std::string& wcaId, const std::string& name, size_t sumOfRanks) : wcaId(wcaId), name(name), sumOfRanks(sumOfRanks) {}
 };

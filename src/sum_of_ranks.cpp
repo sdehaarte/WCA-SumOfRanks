@@ -38,7 +38,6 @@ void SorTools::parseTSVFile(const std::string& filename,
 
         // Store rank data
         size_t cuberIndex = idToIndex[cuberId];
-        cubers[cuberIndex].eventRanks[eventId] = worldRank;
         eventRank[eventId][cuberId] = worldRank;
         eventCubers[eventId].insert(cuberId);
         eventLastRank[eventId] = std::max(eventLastRank[eventId], worldRank);
@@ -50,7 +49,7 @@ std::vector<Cuber> SorTools::loadAndCalculateSumOfRanks() {
     const std::string& averageFilePath = "../data/Preprocessed_RanksAverage.tsv";
     const std::string& singleFilePath = "../data/Preprocessed_RanksSingle.tsv";
     const std::string& personsFilePath = "../data/WCA_export_Persons.tsv";
-    const std::vector<std::string> eventIds = { "222", "333", "444", "555", "666", "777", "333oh" "333bf", "333fm", "333mbf", "minx", "pyram", "skewb", "sq1", "clock", "444bf", "555bf" };
+    const std::vector<std::string> eventIds = { "222", "333", "444", "555", "666", "777", "333oh", "333bf", "333fm", "333mbf", "minx", "pyram", "skewb", "sq1", "clock", "444bf", "555bf" };
 
     // Vector with all Cubers
     std::vector<Cuber> cubers;
@@ -130,7 +129,7 @@ void SorTools::merge(std::vector<Cuber>& cubers, int low, int mid, int high) {
     for (int i=0; i < x; i++)
         X[i] = cubers[low + i];
     for (int j=0; j < y; j++)
-        Y[j] = cubers[mid + low + j];
+        Y[j] = cubers[mid + 1 + j];
     
     // Initializes index for left subarray, right subarray, merged array, respectively
     int i = 0, j = 0, k = low;
@@ -204,27 +203,27 @@ int SorTools::partition(std::vector<Cuber>& cubers, int low, int high) {
     return down;
 }
 
-// 
+// Generates ranks to output path
 void SorTools::outputJson(const std::vector<Cuber>& cubers, const std::string& outputPath) {
     std::ofstream file(outputPath);
     if (!file) {
         std::cerr << "Couldn't open " << outputPath << "\n";
         return;
     }
-
-    // file << "[\n";
+    file << "{\"ranks\":[";
     for (size_t i = 0; i < cubers.size(); ++i) {
         const auto& cuber = cubers[i];
-        if (i > 0) file << ",";
-        file << "  {\"wcaId\": \"" << cuber.wcaId
+        if (i > 0) file << ", ";
+        file << "{\"wcaId\": \"" << cuber.wcaId
              << "\", \"name\": \"" << cuber.name
              << "\", \"rank\": " << (i + 1)
              << ", \"sumOfRanks\": " << cuber.sumOfRanks
-             << "\"}";
+             << "}";
     }
-    // file << "]\n";
+    file << "]}";
     file.close();
 }
+
 
 void SorTools::outputComparison(const std::vector<Cuber>& competitors) {
 
