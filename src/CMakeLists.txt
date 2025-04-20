@@ -5,6 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(GCC_COVERAGE_COMPILE_FLAGS "-Wall -Werror")
 
-add_executable(Main
+add_executable(wca_sor
     main.cpp
     sum_of_ranks.h sum_of_ranks.cpp)
