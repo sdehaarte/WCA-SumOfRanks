@@ -12,7 +12,7 @@ const wcaSorPath = path.join(buildPath, 'wca_sor');
 const ranksFilePath = path.join(__dirname, '..', 'src', 'output', 'ranks.json');
 const compareFilePath = path.join(__dirname, '..', 'src', 'output', 'compare.json');
 
-app.use(express.static('../frontend'));
+app.use(express.static('../public'));
 
 app.get('/api/rankings', (req, res) => {
   const sort = req.query.sort || 'merge';
