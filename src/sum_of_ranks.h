@@ -84,8 +84,48 @@ namespace SumOfRanks {
         }
     }
 
-    void quickSort(std::vector<Cuber>& cubers, int low, int high);
-    int partition(std::vector<Cuber>& cubers, int low, int high);
+    // QuickSort function implementation (ascneding order by sumOfRanks)
+    void quickSort(std::vector<Cuber>& cubers, int low, int high) {
+        if (low < high) {
+            // Pivot based 
+            int pivot = partition(cubers, low, high);
+
+            // Sort elements before pivot and after pivot
+            quickSort(cubers, low, pivot - 1);
+            quickSort(cubers, pivot + 1, high);
+        }
+    }
+
+    // QuickSort partition helper
+    int partition(std::vector<Cuber>& cubers, int low, int high) {
+        // Choose the first cuber's sumOfRanks as pivot
+        int pivot = cubers[low].sumOfRanks;
+        // Initalize up (finds larger elements) and down (finds smaller elements) index
+        int up = low, down = high;
+
+        // Iterate up and down until they meet
+        while (up < down) {
+            // Increase up until cuber's sumOfRanks greater than pivot
+            for (int j=up; j < high; j++) {
+                if (cubers[up].sumOfRanks > pivot)
+                    break;
+                up ++;
+            }
+            // Decrease down util cubers' sumOfRanks less than pivot
+            for (int j=down; j> low; j--) {
+                if (cubers[down].sumOfRanks < pivot)
+                    break;
+                down --;
+            }
+            // If pointers haven't crossed, swap elements to place them on correct sides
+            if (up < down)
+                std::swap(cubers[up], cubers[down]);
+        }
+        // Swap pivot with down to correct positions
+        std::swap(cubers[low], cubers[down]);
+        return down;
+    }
+
     
     void outputJson(const std::vector<Cuber>& cubers, const std::string& outputPath);
     void outputComparison(const std::vector<Cuber>& competitors);
