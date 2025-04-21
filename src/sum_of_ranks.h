@@ -31,11 +31,9 @@ namespace SumOfRanks {
         if (low < high) {
             // Middle index to halve arrays
             int mid = low + (high - low) / 2;
-
             // Sort elements before middle and after middle
             mergeSort(cubers, low, mid);
             mergeSort(cubers, mid + 1, high);
-
             // Merge sorted both halves
             merge(cubers, low, mid, high);
         }
@@ -48,7 +46,6 @@ namespace SumOfRanks {
         int y = high - mid;
         // Create left and right subarrays
         std::vector<Cuber> X(x), Y(y);
-
         // Add data to left and right subarrays
         for (int i=0; i < x; i++)
             X[i] = cubers[low + i];
@@ -89,7 +86,6 @@ namespace SumOfRanks {
         if (low < high) {
             // Pivot based 
             int pivot = partition(cubers, low, high);
-
             // Sort elements before pivot and after pivot
             quickSort(cubers, low, pivot - 1);
             quickSort(cubers, pivot + 1, high);
@@ -126,9 +122,28 @@ namespace SumOfRanks {
         return down;
     }
 
-    
-    void outputJson(const std::vector<Cuber>& cubers, const std::string& outputPath);
-    void outputComparison(const std::vector<Cuber>& competitors);
+    void outputJson(const std::vector<Cuber>& cubers, const std::string& outputPath, size_t N) {
+        std::ofstream file(outputPath);
+        if (!file) {
+            std::cerr << "Couldn't open " << outputPath << "\n";
+            return;
+        }
+        file << "{\"ranks\":[";
+        for (size_t i = 0; i < std::min(N, cubers.size()); ++i) {
+            const auto& cuber = cubers[i];
+            if (i > 0) file << ", ";
+            file << "{\"wcaId\": \"" << cuber.wcaId
+                 << "\", \"name\": \"" << cuber.name
+                 << "\", \"rank\": " << (i + 1)
+                 << ", \"sumOfRanks\": " << cuber.sumOfRanks
+                 << "}";
+        }
+        file << "]}";
+        file.close();
+    }
+    void outputComparison(const std::vector<Cuber>& competitors) {
+
+    }
 }
 
 const std::vector<std::string> allEvents = {
