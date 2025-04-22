@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <limits>
 
 using namespace SumOfRanks;
 
@@ -17,15 +18,25 @@ void compareSortAlgorithms(std::vector<Cuber>& cubers) {
     std::vector<Cuber> ms_copy = cubers;
     std::vector<Cuber> qs_copy = cubers;
 
+    std::cout << "Starting MergeSort...\n";
     auto startM = std::chrono::high_resolution_clock::now();
     mergeSort(ms_copy, 0, ms_copy.size() - 1);
     auto endM = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> durationM = endM - startM;
+    std::cout << "MergeSort done, \n";
 
+    std::cout << "Write MergeSort results to merge_sorted.json...\n";
+    outputJson(ms_copy, "merge_sorted.json", 100);
+
+    std::cout << "Starting QuickSort...\n";
     auto startQ = std::chrono::high_resolution_clock::now();
     quickSort(qs_copy, 0, qs_copy.size() - 1);
     auto endQ = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> durationQ = endQ - startQ;
+    std::cout << "QuickSort done.\n";
+
+    std::cout << "Write QuickSort results to quick_sorted.json...\n";
+    outputJson(qs_copy, "quick_sorted.json", 100);
 
     std::cout << "MergeSort took: " << durationM.count() << " seconds\n";
     std::cout << "QuickSort took: " << durationQ.count() << " seconds\n";
