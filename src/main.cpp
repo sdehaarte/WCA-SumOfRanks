@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
     // defaulting to merge (because it actually works right now unlike quick...)
     std::string mode = "";
     std::string sort_type = "merge";
-    int n = 10;
+    int n = 100;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -76,21 +76,22 @@ int main(int argc, char* argv[]) {
     if (mode == "sort") {
         if (sort_type == "quick") {
             quickSort(cubers, 0, cubers.size() - 1);
-            std::string outputFilename = "quick_sorted.json";
+            std::string outputFilename = "../output/ranks.json";
             outputJson(cubers, outputFilename, n);
         } 
         else {
             mergeSort(cubers, 0, cubers.size() - 1);
-            std::string outputFilename = "merge_sorted.json";
+            std::string outputFilename = "../output/ranks.json";
             outputJson(cubers, outputFilename, n);
         }
-        displayTopN(cubers, n);
+        // displayTopN(cubers, n);
     } 
     else if (mode == "compare") {
-       compareSortAlgorithms(cubers, n);
+    //    compareSortAlgorithms(cubers, n);
+        outputComparison(cubers, "../output/compare.json");
     } 
     else {
-        std::cout << "Invalid mode'.\n";
+        std::cout << "Invalid mode.\n";
         return 1;
     }
 

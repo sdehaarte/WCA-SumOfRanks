@@ -86,9 +86,9 @@ namespace SumOfRanks {
         std::unordered_map<std::string, std::unordered_set<std::string> > eventCubers;
         std::unordered_map<std::string, size_t> eventLastRank;
 
-        loadCuberInfo("data/WCA_export_Persons.tsv", cuberName);
-        parseTSVFile("data/Preprocessed_RanksSingle.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
-        parseTSVFile("data/Preprocessed_RanksAverage.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
+        loadCuberInfo("../data/WCA_export_Persons.tsv", cuberName);
+        parseTSVFile("../data/Preprocessed_RanksSingle.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
+        parseTSVFile("../data/Preprocessed_RanksAverage.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
 
         // Calculates Sum of Ranks
         for (const auto& eventId : eventIds) {
