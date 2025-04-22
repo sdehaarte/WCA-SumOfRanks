@@ -14,7 +14,7 @@ void displayTopN(const std::vector<Cuber>& cuber, int n) {
     }
 }
 
-void compareSortAlgorithms(std::vector<Cuber>& cubers) {
+void compareSortAlgorithms(std::vector<Cuber>& cubers, int n) {
     std::vector<Cuber> ms_copy = cubers;
     std::vector<Cuber> qs_copy = cubers;
 
@@ -26,7 +26,7 @@ void compareSortAlgorithms(std::vector<Cuber>& cubers) {
     std::cout << "MergeSort done, \n";
 
     std::cout << "Write MergeSort results to merge_sorted.json...\n";
-    outputJson(ms_copy, "merge_sorted.json", 100);
+    outputJson(ms_copy, "merge_sorted.json", n);
 
     std::cout << "Starting QuickSort...\n";
     auto startQ = std::chrono::high_resolution_clock::now();
@@ -36,50 +36,63 @@ void compareSortAlgorithms(std::vector<Cuber>& cubers) {
     std::cout << "QuickSort done.\n";
 
     std::cout << "Write QuickSort results to quick_sorted.json...\n";
-    outputJson(qs_copy, "quick_sorted.json", 100);
+    outputJson(qs_copy, "quick_sorted.json", n);
 
     std::cout << "MergeSort took: " << durationM.count() << " seconds\n";
     std::cout << "QuickSort took: " << durationQ.count() << " seconds\n";
 }
 
-int main() {
-    std::vector<Cuber> cubers = loadAndCalculateSumOfRanks();
-    // implenment loading the files and oadAndCalculateSumOfRanks
-    if (cubers.empty()) {
-        std::cout << "Files not loaded";
+int main(int argc, char* argv[]) {
+    // defaulting to merge (because it actually works right now unlike quick...)
+    std::string mode = "";
+    std::string sort_type = "merge";
+    int n = 10;
+
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "--mode" && i + 1 < argc) {
+            mode = argv[++i];
+        } else if (arg == "--sort" && i + 1 < argc) {
+            sort_type = argv[++i];
+        } else if (arg == "--n" && i + 1 < argc) {
+            n = std::stoi(argv[++i]);
+        }
+    }
+
+    if (mode.empty()) {
+        std::cout << "Usage:\n"
+                  << "  ./sor --mode sort [--sort quick|merge] [--n N]\n"
+                  << "  ./sor --mode compare\n";
         return 1;
     }
 
-    while (true) {
-        std::cout << "\nMenu:\n";
-        std::cout << "1. Sort using Merge Sort\n";
-        std::cout << "2. Sort using Quick Sort\n";
-        std::cout << "3. Compare Merge Sort vs Quick Sort\n";
-        std::cout << "4. Exit\n";
-        std::cout << "Enter your choice: ";
-        int choice;
-        std::cin >> choice;
-
-        if (choice == 1) {
-            mergeSort(cubers, 0, cubers.size() - 1);
-            int n;
-            std::cout << "Enter number of cubers to display: ";
-            std::cin >> n;
-            displayTopN(cubers, n);
-        } else if (choice == 2) {
-            quickSort(cubers, 0, cubers.size() - 1);
-            int n;
-            std::cout << "Enter number of cubers to display: ";
-            std::cin >> n;
-            displayTopN(cubers, n);
-        } else if (choice == 3) {
-            compareSortAlgorithms(cubers);
-        } else if (choice == 4) {
-            std::cout << "Ending Program...\n";
-            break;
-        } else {
-            std::cout << "Invalid Choice!\n";
-        }
+    std::vector<Cuber> cubers = loadAndCalculateSumOfRanks();
+    if (cubers.empty()) {
+        std::cout << "Files not loaded\n";
+        return 1;
     }
+
+    // revisit the hardcoding? idk
+    if (mode == "sort") {
+        if (sort_type == "quick") {
+            quickSort(cubers, 0, cubers.size() - 1);
+            std::string outputFilename = "quick_sorted.json";
+            outputJson(cubers, outputFilename, n);
+        } 
+        else {
+            mergeSort(cubers, 0, cubers.size() - 1);
+            std::string outputFilename = "merge_sorted.json";
+            outputJson(cubers, outputFilename, n);
+        }
+        displayTopN(cubers, n);
+    } 
+    else if (mode == "compare") {
+       compareSortAlgorithms(cubers, n);
+    } 
+    else {
+        std::cout << "Invalid mode'.\n";
+        return 1;
+    }
+
     return 0;
 }
