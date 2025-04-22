@@ -4,49 +4,66 @@ const path = require('path');
 const fs = require('fs').promises
 
 const app = express();
-const port = 3000;
+app.use(express.static('../public'));
+const port = 3004;
 
 const buildPath = path.join(__dirname, '..', 'src', 'build');
 process.chdir(buildPath);
-const wcaSorPath = path.join(buildPath, 'wca_sor');
+const wcaSorPath = path.join(buildPath, 'WCA-SumOfRanks');
 const ranksFilePath = path.join(__dirname, '..', 'src', 'output', 'ranks.json');
 const compareFilePath = path.join(__dirname, '..', 'src', 'output', 'compare.json');
 
-app.use(express.static('../public'));
-
-app.get('/api/rankings', (req, res) => {
+app.get('/api/rankings', async (req, res) => {
   const sort = req.query.sort || 'merge';
-  exec(`"${wcaSorPath}" --mode sort --sort ${sort}`, async (error, stderr) => {
-    if (error) {
+  try {
+    const { stderr: execError } = await new Promise((resolve, reject) => {
+      const cmd = `"${wcaSorPath}" --mode sort --sort ${sort}`;
+      console.log("Running command: ", cmd);
+      exec(cmd, (error, stdout, stderr) => {
+        if (error) {
+          reject({ error, stderr });
+          return;
+        }
+        resolve({ stdout, stderr });
+      });
+    });
+    if (execError) {
       console.error("Execution error: ", error);
       return res.status(500).send(stderr);
     }
-    try {
-      const ranksJSON = await fs.readFile(ranksFilePath, 'utf-8');
-      const ranks = JSON.parse(ranksJSON);
-      res.json(ranks);
-    } catch (e) {
-      console.error("Error reading ranks.json:", e);
-      return res.status(500).send("Error reading ranks.json");
-    }
-  });
+    const ranksJSON = await fs.readFile(ranksFilePath, 'utf-8');
+    const ranks = JSON.parse(ranksJSON);
+    res.json(ranks);
+  } catch (e) {
+    console.error("Execution failed:", e.error);
+    return res.status(500).send(e.stderr);
+  }
 });
 
-app.get('/api/performance', (req, res) => {
-  exec(`"${wcaSorPath}" --mode compare`, async (error, stderr) => {
-    if (error) {
+app.get('/api/performance', async (req, res) => {
+  try {
+    const { stderr: execError } = await new Promise((resolve, reject) => {
+      const cmd = `"${wcaSorPath}" --mode compare`;
+      console.log("Running command: ", cmd);
+      exec(cmd, (error, stdout, stderr) => {
+        if (error) {
+          reject({ error, stderr });
+          return;
+        }
+        resolve({ stdout, stderr });
+      });
+    });
+    if (execError) {
       console.error("Execution error: ", error);
       return res.status(500).send(stderr);
     }
-    try {
-      const comparisonJSON = await fs.readFile(compareFilePath, 'utf-8');
-      const comparison = JSON.parse(comparisonJSON);
-      res.json(comparison);
-    } catch (e) {
-      console.error("Error reading comparison.json", e);
-      return res.status(500).send("Error reading comparison.json");
-    }
-  });
+    const compareJSON = await fs.readFile(compareFilePath, 'utf-8');
+    const compare = JSON.parse(compareJSON);
+    res.json(compare);
+  } catch (e) {
+    console.error("Execution failed:", e.error);
+    return res.status(500).send(e.stderr);
+  }
 });
 
 app.listen(port, () => {

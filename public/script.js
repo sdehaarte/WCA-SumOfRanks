@@ -12,6 +12,27 @@ const fetchResults = async () => {
     displayRankingsPage(1);
 }
 
+const fetchPerformance = async () => {
+    const performanceDiv = document.getElementById('performance')
+    const response = await fetch('/api/performance');
+    const data = await response.json();
+    performanceDiv.innerHTML = '';
+
+    const msRow = document.createElement('tr');
+    msRow.innerHTML = `
+        <td>MergeSort Time</td>
+        <td>${data.mergeSort}</td>`;
+
+    const qsRow = document.createElement('tr');
+    qsRow.innerHTML = `
+        <td>QuickSort Time</td>
+        <td>${data.quickSort}</td>`;
+        
+    performanceDiv.appendChild(msRow);
+    performanceDiv.appendChild(qsRow);
+}
+
+
 function displayRankingsPage(page) {
     const rankings = document.getElementById('rankings');
     if (!rankings) {
