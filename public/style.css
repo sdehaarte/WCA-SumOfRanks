@@ -43,3 +43,12 @@ body {
   .about h2 {
     margin-bottom: 10px;
   }
+
+  select {
+    display: block;
+    margin: 0 auto;
+  }
+  button {
+    display: block;
+    margin: 0 auto;
+  }
