@@ -44,5 +44,5 @@ namespace SumOfRanks {
     int partition(std::vector<Cuber>& cubers, int low, int high);
 
     void outputJson(const std::vector<Cuber>& cubers, const std::string& outputPath, size_t N);
-    void outputComparison(const std::vector<Cuber>& competitors);
+    void outputComparison(const std::vector<Cuber>& unsorted_cubers, const std::string& outputPath);
 }

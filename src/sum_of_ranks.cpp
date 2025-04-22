@@ -76,8 +76,7 @@ namespace SumOfRanks {
         }
     }
     
-    // implement SumOfRanks here
-
+    // Loads persons tsv, preprocessed tsv, and calculates sum of ranks
     std::vector<Cuber> loadAndCalculateSumOfRanks() {
         const std::vector<std::string> eventIds = { "222", "333", "444", "555", "666", "777", "333oh", "333bf", "333fm", "333mbf", "minx", "pyram", "skewb", "sq1", "clock", "444bf", "555bf" };
         std::vector<Cuber> cubers;
@@ -91,6 +90,7 @@ namespace SumOfRanks {
         parseTSVFile("data/Preprocessed_RanksSingle.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
         parseTSVFile("data/Preprocessed_RanksAverage.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
 
+        // Calculates Sum of Ranks
         for (const auto& eventId : eventIds) {
             for (Cuber& cuber : cubers) {
                 if (eventCubers[eventId].count(cuber.wcaId)) {
@@ -138,8 +138,7 @@ void merge(std::vector<Cuber>& cubers, int low, int mid, int high) {
         if (X[i].sumOfRanks <= Y[j].sumOfRanks) {
             cubers[k] = X[i];
             i++;
-        }
-        else {
+        } else {
             cubers[k] = Y[j];
             j++;
         }
@@ -200,12 +199,14 @@ int partition(std::vector<Cuber>& cubers, int low, int high) {
     return down;
 }
 
+// Generates ranks in json format to an output path
 void outputJson(const std::vector<Cuber>& cubers, const std::string& outputPath, size_t N) {
     std::ofstream file(outputPath);
     if (!file) {
         std::cerr << "Couldn't open " << outputPath << "\n";
         return;
     }
+    // Prints the first N or size of cubers (whichever is smaller)
     file << "{\"ranks\":[";
     for (size_t i = 0; i < std::min(N, cubers.size()); ++i) {
         const auto& cuber = cubers[i];
@@ -220,7 +221,30 @@ void outputJson(const std::vector<Cuber>& cubers, const std::string& outputPath,
     file.close();
 }
 
-void outputComparison(const std::vector<Cuber>& competitors) {
+// Generate performance stats in json format to an output path (refers to compareSortAlgorithms function)
+void outputComparison(const std::vector<Cuber>& unsorted_cubers, const std::string& outputPath) {
+    // Create copies of same unsorted vector of Cubers
+    std::vector<Cuber> ms_copy = unsorted_cubers;
+    std::vector<Cuber> qs_copy = unsorted_cubers;
 
+    auto startM = std::chrono::high_resolution_clock::now();
+    mergeSort(ms_copy, 0, ms_copy.size() - 1);
+    auto endM = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> durationM = endM - startM;
+
+    auto startQ = std::chrono::high_resolution_clock::now();
+    quickSort(qs_copy, 0, qs_copy.size() - 1);
+    auto endQ = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> durationQ = endQ - startQ;
+
+    std::ofstream file(outputPath);
+    if (!file) {
+        std::cerr << "Couldn't open " << outputPath << "\n";
+        return;
+    }
+    // Outputs duration taken for each sort respectively
+    file << "{\"mergeSort\":" << durationM.count()
+         << ", \"quickSort\": " << durationQ.count()
+         << "}";
 }
 }
