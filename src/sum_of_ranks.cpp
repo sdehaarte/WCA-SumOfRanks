@@ -79,6 +79,7 @@ namespace SumOfRanks {
     // implement SumOfRanks here
 
     std::vector<Cuber> loadAndCalculateSumOfRanks() {
+        const std::vector<std::string> eventIds = { "222", "333", "444", "555", "666", "777", "333oh", "333bf", "333fm", "333mbf", "minx", "pyram", "skewb", "sq1", "clock", "444bf", "555bf" };
         std::vector<Cuber> cubers;
         std::unordered_map<std::string, size_t> idToIndex;
         std::unordered_map<std::string, std::string> cuberName;
@@ -90,6 +91,15 @@ namespace SumOfRanks {
         parseTSVFile("data/Preprocessed_RanksSingle.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
         parseTSVFile("data/Preprocessed_RanksAverage.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
 
+        for (const auto& eventId : eventIds) {
+            for (Cuber& cuber : cubers) {
+                if (eventCubers[eventId].count(cuber.wcaId)) {
+                    cuber.sumOfRanks += eventRank[eventId][cuber.wcaId];
+                } else {
+                    cuber.sumOfRanks += eventLastRank[eventId] + 1;
+                }
+            }
+        }
         return cubers;
     }
 // MergeSort implementation (ascending order by sumOfRanks)
