@@ -86,14 +86,14 @@ namespace SumOfRanks {
         std::unordered_map<std::string, std::unordered_set<std::string> > eventCubers;
         std::unordered_map<std::string, size_t> eventLastRank;
 
-        loadCuberInfo("../data/WCA_export_Persons.tsv", cuberName);
-        parseTSVFile("../data/Preprocessed_RanksSingle.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
-        parseTSVFile("../data/Preprocessed_RanksAverage.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
+        loadCuberInfo("data/WCA_export_Persons.tsv", cuberName);
+        parseTSVFile("data/Preprocessed_RanksSingle.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
+        parseTSVFile("data/Preprocessed_RanksAverage.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
 
         return cubers;
     }
 // MergeSort implementation (ascending order by sumOfRanks)
-void SumOfRanks::mergeSort(std::vector<Cuber>& cubers, int low, int high) {
+void mergeSort(std::vector<Cuber>& cubers, int low, int high) {
     if (low < high) {
         // Middle index to halve arrays
         int mid = low + (high - low) / 2;
@@ -101,13 +101,13 @@ void SumOfRanks::mergeSort(std::vector<Cuber>& cubers, int low, int high) {
         mergeSort(cubers, low, mid);
         mergeSort(cubers, mid + 1, high);
         // Merge sorted both halves
-        SumOfRanks::merge(cubers, low, mid, high);
+        merge(cubers, low, mid, high);
     }
 }
 
 
 // MergeSort merge helper
-void SumOfRanks::merge(std::vector<Cuber>& cubers, int low, int mid, int high) {
+void merge(std::vector<Cuber>& cubers, int low, int mid, int high) {
     // Calculate sizes of left and right subarrays
     int x = mid - low + 1;
     int y = high - mid;
@@ -150,7 +150,7 @@ void SumOfRanks::merge(std::vector<Cuber>& cubers, int low, int mid, int high) {
 
 
 // QuickSort function implementation (ascneding order by sumOfRanks)
-void SumOfRanks::quickSort(std::vector<Cuber>& cubers, int low, int high) {
+void quickSort(std::vector<Cuber>& cubers, int low, int high) {
     if (low < high) {
         // Pivot based 
         int pivot = partition(cubers, low, high);
@@ -161,7 +161,7 @@ void SumOfRanks::quickSort(std::vector<Cuber>& cubers, int low, int high) {
 }
 
 // QuickSort partition helper
-int SumOfRanks::partition(std::vector<Cuber>& cubers, int low, int high) {
+int partition(std::vector<Cuber>& cubers, int low, int high) {
     // Choose the first cuber's sumOfRanks as pivot
     int pivot = cubers[low].sumOfRanks;
     // Initalize up (finds larger elements) and down (finds smaller elements) index

@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION  3.15)
 project(WCA-SumOfRanks)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(WCA-SumOfRanks main.cpp sum_of_ranks.cpp sum_of_ranks.h)
