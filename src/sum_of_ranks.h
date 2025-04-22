@@ -17,14 +17,97 @@ struct Cuber {
 
 namespace SumOfRanks {
 
-    void parseTSVFile(const std::string& filename,
-        std::vector<Cuber>& cubers,
+    void parseTSVFile(
+        const std::string& filename,
+        std::vector<Cuber> & cubers,
         std::unordered_map<std::string, size_t>& idToIndex,
-        std::unordered_map<std::string, std::string>& cuberName,
-        std::unordered_map<std::string, std::unordered_map<std::string, size_t>>& eventRank,
-        std::unordered_map<std::string, std::unordered_set<std::string>>& eventCubers,
-        std::unordered_map<std::string, size_t>& eventLastRank);
-    std::vector<Cuber> loadAndCalculateSumOfRanks();
+        const std::unordered_map<std::string, std::string>& cuberName,
+        std::unordered_map<std::string, std::unordered_map<std::string, size_t> >& eventRank,
+        std::unordered_map<std::string, std::unordered_set<std::string> >& eventCubers,
+        std::unordered_map<std::string, size_t>& eventLastRank)
+    {
+        std::ifstream file(filename);
+        if (!file) {
+            std::cerr << "Error opening file: " << filename << std::endl;
+            return;
+        }
+
+        std::string line;
+        std::getline(file, line);
+
+        while (std::getline(file, line)) {
+            std::istringstream ss (line);
+
+            size_t best, worldRank, continentRank, countryRank;
+            std::string cuberId, eventId;
+
+            ss >> best >> cuberId >> eventId >> worldRank >> continentRank >> countryRank;
+
+            if (idToIndex.find(cuberId) == idToIndex.end()) {
+                std::string name;
+                std::unordered_map<std::string, std::string>::const_iterator it = cuberName.find(cuberId);
+                if (it != cuberName.end()) {
+                    name = it->second;
+                } else {
+                    name = "Unknown";
+                }
+
+                idToIndex[cuberId] = cubers.size();
+                cubers.push_back(Cuber(cuberId, name, 0));
+            }
+
+            size_t idx = idToIndex[cuberId];
+            eventRank[eventId][cuberId] = worldRank;
+            eventCubers[eventId].insert(cuberId);
+            eventLastRank[eventId] = std:: max(eventLastRank[eventId], worldRank);
+        }
+    }
+
+    void loadCuberInfo(
+        const std::string& filename,
+        std::unordered_map<std::string, std::string>& cuberName)
+    {
+        std::ifstream file(filename);
+        if (!file) {
+            std::cerr << "Error opening file: " << filename << '\n';
+            return;
+        }
+
+        std::string line;
+        std::getline(file, line);
+
+        while (std::getline(file, line)) {
+            std::stringstream ss(line);
+            std::string name, gender, id, subid, country;
+
+            std::getline(ss, name, '\t');
+            std::getline(ss, gender, '\t');
+            std::getline(ss, id, '\t');
+            std::getline(ss, subid, '\t');
+            std::getline(ss, country, '\t');
+
+            if(cuberName.find(id) == cuberName.end()) {
+                cuberName[id] = name;
+            }
+        }
+    }
+    
+    // implement SumOfRanks here
+
+    std::vector<Cuber> loadAndCalculateSumOfRanks() {
+        std::vector<Cuber> cubers;
+        std::unordered_map<std::string, size_t> idToIndex;
+        std::unordered_map<std::string, std::string> cuberName;
+        std::unordered_map<std::string, std::unordered_map<std::string, size_t> > eventRank;
+        std::unordered_map<std::string, std::unordered_set<std::string> > eventCubers;
+        std::unordered_map<std::string, size_t> eventLastRank;
+
+        loadCuberInfo("../data/WCA_export_Persons.tsv", cuberName);
+        parseTSVFile("../data/Preprocessed_RanksSingle.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
+        parseTSVFile("../data/Preprocessed_RanksAverage.tsv", cubers, idToIndex, cuberName, eventRank, eventCubers, eventLastRank);
+
+        return cubers;
+    };
 
     // MergeSort implementation (ascending order by sumOfRanks)
     void mergeSort(std::vector<Cuber>& cubers, int low, int high) {
@@ -143,60 +226,5 @@ namespace SumOfRanks {
     }
     void outputComparison(const std::vector<Cuber>& competitors) {
 
-    }
-}
-
-const std::vector<std::string> allEvents = {
-    "222_avg", "333_avg", "333fm_avg", "333oh_avg","444_avg",
-    "555_avg", "666_avg","777_avg", "clock_avg", "minx_avg",
-    "pyram_avg", "skewb_avg","sq1_avg",
-
-    "333bf_single", "333_mbf_single", "444bf_single","555bf_single",
-};
-
-void parseTSVFile(const std::string& filename, std::unordered_map<std::string, Cuber>& players, int& maxRank, const std::string& suffix) {
-    std::ifstream file(filename);
-    if (!file) {
-        std::cerr << "Error opening file " << filename << std::endl;
-        return;
-    }
-
-    std::string line;
-    std::getline(file, line);
-
-    while (getline(file, line)) {
-        std::istringstream ss(line);
-        int best, worldRank, continentRank, countryRank;
-        std::string personId, eventId;
-        ss >> best >> personId >> eventId >> worldRank >> continentRank >> countryRank;
-
-        std::string eventKey = eventId + suffix;
-
-        if (players.find(personId) == players.end()) {
-            players[personId] = Player{personId};
-        }
-
-        players[personId].eventRanks[eventKey] = worldRank;
-
-        if (worldRank > maxRank) {
-            maxRank = worldRank;
-        }
-    }
-}
-
-// Combine avg and single players, and calculate total rank
-
-// Implement Merge Sort Algorithm
-
-// Implement Quick Sort Algorithm
-
-// run both and compare Algorithm
-
-// Implement performance
-
-void displayTopN(const std::vector<Cuber>& cubers, int n) {
-    for (int i = 0; i < std::min(n, (int)cubers.size()); ++i) {
-        std::cout << i + 1 << ". " << cubers[i].wcaId
-                  << " - Total Rank: " << cubers[i].sumOfRanks << "\n";
     }
 }
