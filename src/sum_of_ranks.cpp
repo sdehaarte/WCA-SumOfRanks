@@ -101,150 +101,150 @@ namespace SumOfRanks {
             }
         }
         return cubers;
+        }
+    // MergeSort implementation (ascending order by sumOfRanks)
+    void mergeSort(std::vector<Cuber>& cubers, int low, int high) {
+        if (low < high) {
+            // Middle index to halve arrays
+            int mid = low + (high - low) / 2;
+            // Sort elements before middle and after middle
+            mergeSort(cubers, low, mid);
+            mergeSort(cubers, mid + 1, high);
+            // Merge sorted both halves
+            merge(cubers, low, mid, high);
+        }
     }
-// MergeSort implementation (ascending order by sumOfRanks)
-void mergeSort(std::vector<Cuber>& cubers, int low, int high) {
-    if (low < high) {
-        // Middle index to halve arrays
-        int mid = low + (high - low) / 2;
-        // Sort elements before middle and after middle
-        mergeSort(cubers, low, mid);
-        mergeSort(cubers, mid + 1, high);
-        // Merge sorted both halves
-        merge(cubers, low, mid, high);
-    }
-}
 
 
-// MergeSort merge helper
-void merge(std::vector<Cuber>& cubers, int low, int mid, int high) {
-    // Calculate sizes of left and right subarrays
-    int x = mid - low + 1;
-    int y = high - mid;
-    // Create left and right subarrays
-    std::vector<Cuber> X(x), Y(y);
-    // Add data to left and right subarrays
-    for (int i=0; i < x; i++)
-        X[i] = cubers[low + i];
-    for (int j=0; j < y; j++)
-        Y[j] = cubers[mid + 1 + j];
-    
-    // Initializes index for left subarray, right subarray, merged array, respectively
-    int i = 0, j = 0, k = low;
+    // MergeSort merge helper
+    void merge(std::vector<Cuber>& cubers, int low, int mid, int high) {
+        // Calculate sizes of left and right subarrays
+        int x = mid - low + 1;
+        int y = high - mid;
+        // Create left and right subarrays
+        std::vector<Cuber> X(x), Y(y);
+        // Add data to left and right subarrays
+        for (int i=0; i < x; i++)
+            X[i] = cubers[low + i];
+        for (int j=0; j < y; j++)
+            Y[j] = cubers[mid + 1 + j];
+        
+        // Initializes index for left subarray, right subarray, merged array, respectively
+        int i = 0, j = 0, k = low;
 
-    // Merge left and right subarrays back into cubers
-    while (i < x && j < y) {
-        // Compares sumOfRanks, with smaller sumOfRanks coming first
-        if (X[i].sumOfRanks <= Y[j].sumOfRanks) {
+        // Merge left and right subarrays back into cubers
+        while (i < x && j < y) {
+            // Compares sumOfRanks, with smaller sumOfRanks coming first
+            if (X[i].sumOfRanks <= Y[j].sumOfRanks) {
+                cubers[k] = X[i];
+                i++;
+            } else {
+                cubers[k] = Y[j];
+                j++;
+            }
+            k++;
+        }
+        // Add remaining elements from left subarray then right subarray
+        while (i < x) {
             cubers[k] = X[i];
             i++;
-        } else {
+            k++;
+        }
+        while (j < y) {
             cubers[k] = Y[j];
             j++;
+            k++;
         }
-        k++;
     }
-    // Add remaining elements from left subarray then right subarray
-    while (i < x) {
-        cubers[k] = X[i];
-        i++;
-        k++;
-    }
-    while (j < y) {
-        cubers[k] = Y[j];
-        j++;
-        k++;
-    }
-}
 
 
-// QuickSort function implementation (ascneding order by sumOfRanks)
-void quickSort(std::vector<Cuber>& cubers, int low, int high) {
-    if (low < high) {
-        // Pivot based 
-        int pivot = partition(cubers, low, high);
-        // Sort elements before pivot and after pivot
-        quickSort(cubers, low, pivot - 1);
-        quickSort(cubers, pivot + 1, high);
-    }
-}
-
-// QuickSort partition helper
-int partition(std::vector<Cuber>& cubers, int low, int high) {
-    // Choose the first cuber's sumOfRanks as pivot
-    int pivot = cubers[low].sumOfRanks;
-    // Initalize up (finds larger elements) and down (finds smaller elements) index
-    int up = low, down = high;
-
-    // Iterate up and down until they meet
-    while (up < down) {
-        // Increase up until cuber's sumOfRanks greater than pivot
-        for (int j=up; j < high; j++) {
-            if (cubers[up].sumOfRanks > pivot)
-                break;
-            up ++;
+    // QuickSort function implementation (ascneding order by sumOfRanks)
+    void quickSort(std::vector<Cuber>& cubers, int low, int high) {
+        if (low < high) {
+            // Pivot based 
+            int pivot = partition(cubers, low, high);
+            // Sort elements before pivot and after pivot
+            quickSort(cubers, low, pivot - 1);
+            quickSort(cubers, pivot + 1, high);
         }
-        // Decrease down util cubers' sumOfRanks less than pivot
-        for (int j=down; j> low; j--) {
-            if (cubers[down].sumOfRanks < pivot)
-                break;
-            down --;
+    }
+
+    // QuickSort partition helper
+    int partition(std::vector<Cuber>& cubers, int low, int high) {
+        // Choose the first cuber's sumOfRanks as pivot
+        int pivot = cubers[low].sumOfRanks;
+        // Initalize up (finds larger elements) and down (finds smaller elements) index
+        int up = low, down = high;
+
+        // Iterate up and down until they meet
+        while (up < down) {
+            // Increase up until cuber's sumOfRanks greater than pivot
+            for (int j=up; j < high; j++) {
+                if (cubers[up].sumOfRanks > pivot)
+                    break;
+                up ++;
+            }
+            // Decrease down util cubers' sumOfRanks less than pivot
+            for (int j=down; j> low; j--) {
+                if (cubers[down].sumOfRanks < pivot)
+                    break;
+                down --;
+            }
+            // If pointers haven't crossed, swap elements to place them on correct sides
+            if (up < down)
+                std::swap(cubers[up], cubers[down]);
         }
-        // If pointers haven't crossed, swap elements to place them on correct sides
-        if (up < down)
-            std::swap(cubers[up], cubers[down]);
+        // Swap pivot with down to correct positions
+        std::swap(cubers[low], cubers[down]);
+        return down;
     }
-    // Swap pivot with down to correct positions
-    std::swap(cubers[low], cubers[down]);
-    return down;
-}
 
-// Generates ranks in json format to an output path
-void outputJson(const std::vector<Cuber>& cubers, const std::string& outputPath, size_t N) {
-    std::ofstream file(outputPath);
-    if (!file) {
-        std::cerr << "Couldn't open " << outputPath << "\n";
-        return;
+    // Generates ranks in json format to an output path
+    void outputJson(const std::vector<Cuber>& cubers, const std::string& outputPath, size_t N) {
+        std::ofstream file(outputPath);
+        if (!file) {
+            std::cerr << "Couldn't open " << outputPath << "\n";
+            return;
+        }
+        // Prints the first N or size of cubers (whichever is smaller)
+        file << "{\"ranks\":[";
+        for (size_t i = 0; i < std::min(N, cubers.size()); ++i) {
+            const auto& cuber = cubers[i];
+            if (i > 0) file << ", ";
+            file << "{\"wcaId\": \"" << cuber.wcaId
+                << "\", \"name\": \"" << cuber.name
+                << "\", \"rank\": " << (i + 1)
+                << ", \"sumOfRanks\": " << cuber.sumOfRanks
+                << "}";
+        }
+        file << "]}";
+        file.close();
     }
-    // Prints the first N or size of cubers (whichever is smaller)
-    file << "{\"ranks\":[";
-    for (size_t i = 0; i < std::min(N, cubers.size()); ++i) {
-        const auto& cuber = cubers[i];
-        if (i > 0) file << ", ";
-        file << "{\"wcaId\": \"" << cuber.wcaId
-             << "\", \"name\": \"" << cuber.name
-             << "\", \"rank\": " << (i + 1)
-             << ", \"sumOfRanks\": " << cuber.sumOfRanks
-             << "}";
+
+    // Generate performance stats in json format to an output path (refers to compareSortAlgorithms function)
+    void outputComparison(const std::vector<Cuber>& unsorted_cubers, const std::string& outputPath) {
+        // Create copies of same unsorted vector of Cubers
+        std::vector<Cuber> ms_copy = unsorted_cubers;
+        std::vector<Cuber> qs_copy = unsorted_cubers;
+
+        auto startM = std::chrono::high_resolution_clock::now();
+        mergeSort(ms_copy, 0, ms_copy.size() - 1);
+        auto endM = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> durationM = endM - startM;
+
+        auto startQ = std::chrono::high_resolution_clock::now();
+        quickSort(qs_copy, 0, qs_copy.size() - 1);
+        auto endQ = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> durationQ = endQ - startQ;
+
+        std::ofstream file(outputPath);
+        if (!file) {
+            std::cerr << "Couldn't open " << outputPath << "\n";
+            return;
+        }
+        // Outputs duration taken for each sort respectively
+        file << "{\"mergeSort\":" << durationM.count()
+            << ", \"quickSort\": " << durationQ.count()
+            << "}";
     }
-    file << "]}";
-    file.close();
-}
-
-// Generate performance stats in json format to an output path (refers to compareSortAlgorithms function)
-void outputComparison(const std::vector<Cuber>& unsorted_cubers, const std::string& outputPath) {
-    // Create copies of same unsorted vector of Cubers
-    std::vector<Cuber> ms_copy = unsorted_cubers;
-    std::vector<Cuber> qs_copy = unsorted_cubers;
-
-    auto startM = std::chrono::high_resolution_clock::now();
-    mergeSort(ms_copy, 0, ms_copy.size() - 1);
-    auto endM = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> durationM = endM - startM;
-
-    auto startQ = std::chrono::high_resolution_clock::now();
-    quickSort(qs_copy, 0, qs_copy.size() - 1);
-    auto endQ = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> durationQ = endQ - startQ;
-
-    std::ofstream file(outputPath);
-    if (!file) {
-        std::cerr << "Couldn't open " << outputPath << "\n";
-        return;
-    }
-    // Outputs duration taken for each sort respectively
-    file << "{\"mergeSort\":" << durationM.count()
-         << ", \"quickSort\": " << durationQ.count()
-         << "}";
-}
 }

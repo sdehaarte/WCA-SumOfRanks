@@ -43,7 +43,6 @@ void compareSortAlgorithms(std::vector<Cuber>& cubers, int n) {
 }
 
 int main(int argc, char* argv[]) {
-    // defaulting to merge (because it actually works right now unlike quick...)
     std::string mode = "";
     std::string sort_type = "merge";
     int n = 100;
@@ -72,7 +71,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // revisit the hardcoding? idk
     if (mode == "sort") {
         if (sort_type == "quick") {
             quickSort(cubers, 0, cubers.size() - 1);
