@@ -73,3 +73,12 @@ function displayRankingsPage(page) {
     table.appendChild(tbody);
     rankings.replaceChild(table, rankings.querySelector('table'));
 }
+
+function goToRankingsPage() {
+    const selectElement = document.getElementById("rankingsPageNumber");
+    const selectedPage = parseInt(selectElement.value);
+    if (!isNaN(selectedPage) && selectedPage >= 1) {
+      currentPage = selectedPage;
+      displayRankingsPage(currentPage);
+    }
+  }

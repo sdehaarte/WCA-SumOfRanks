@@ -5,7 +5,7 @@ const fs = require('fs').promises
 
 const app = express();
 app.use(express.static('../public'));
-const port = 3004;
+const port = 3000;
 
 const buildPath = path.join(__dirname, '..', 'src', 'build');
 process.chdir(buildPath);
@@ -66,6 +66,20 @@ app.get('/api/performance', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-    console.log(`Running on: http://localhost:${port}`)
+const server = app.listen(port, () => {
+  console.log(`Running on: http://localhost:${port}`);
+});
+
+process.on('SIGTERM', () => {
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });
