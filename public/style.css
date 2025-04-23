@@ -3,6 +3,7 @@ body {
     color: white;
     margin: 40px;
     background-color: #282C34;
+    text-align: center;
 }
 
 
@@ -54,6 +55,11 @@ body {
     display: block;
     margin: 0 auto;
   }
-  #performance {
-    align-items: center;
+
+  #performance, button {
+    display: inline-block;
+    margin: 10px;
+  }
+  #display {
+    margin-bottom: 0.3cm;
   }

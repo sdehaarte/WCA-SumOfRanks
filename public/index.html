@@ -20,16 +20,34 @@
     <input type="text" placeholder="Search ID">
   </div>
 
-
+  <div id="display">
+    <label for="topN">Load TopN Cubers:</label>
+    <input type="number" id="topN" min="1">
+  </div>
+  
   <select id="sort">
-      <option value="merge">MergeSort</option>
-      <option value="quick">QuickSort</option>
+    <option value="merge">MergeSort</option>
+    <option value="quick">QuickSort</option>
   </select>
   <button onclick="fetchResults()">Show Rankings</button>
+
+  <hr>
+
+  <div id="pageSelector">
+    <label for="rankingsPageNumber">Go to Page:</label>
+    <input type="number" id="rankingsPageNumber" min="1">
+    <button onclick="goToRankingsPage()">Go</button>
+  </div>
+  
   <div id="rankings"></div>
+
+  <hr>
+
   <button onclick="fetchPerformance()">Show Performance</button>
   <div id="performance"></div>
   
+  <hr>
+
   <div class="about">
     <h2>About</h2>
     <p>The WCA website already features Sum of Ranks single and average as separate categories. However, single is influenced by<br>

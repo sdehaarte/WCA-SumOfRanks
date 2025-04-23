@@ -15,9 +15,10 @@ const compareFilePath = path.join(__dirname, '..', 'src', 'output', 'compare.jso
 
 app.get('/api/rankings', async (req, res) => {
   const sort = req.query.sort || 'merge';
+  const topN = req.query.topN || '100';
   try {
     const { stderr: execError } = await new Promise((resolve, reject) => {
-      const cmd = `"${wcaSorPath}" --mode sort --sort ${sort}`;
+      const cmd = `"${wcaSorPath}" --mode sort --sort ${sort} --n ${topN}`;
       console.log("Running command: ", cmd);
       exec(cmd, (error, stdout, stderr) => {
         if (error) {
@@ -68,18 +69,4 @@ app.get('/api/performance', async (req, res) => {
 
 const server = app.listen(port, () => {
   console.log(`Running on: http://localhost:${port}`);
-});
-
-process.on('SIGTERM', () => {
-  server.close(() => {
-    console.log('Server closed');
-    process.exit(0);
-  });
-});
-
-process.on('SIGINT', () => {
-  server.close(() => {
-    console.log('Server closed');
-    process.exit(0);
-  });
 });

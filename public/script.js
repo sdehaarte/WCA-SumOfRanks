@@ -4,9 +4,9 @@ let rankingsData = [];
 
 const fetchResults = async () => {
     const sort = document.getElementById('sort').value;
-    const response = await fetch(`/api/rankings?sort=${sort}`);
+    const topN = document.getElementById('topN').value;
+    const response = await fetch(`/api/rankings?sort=${sort}&topN=${topN}`);
     const data = await response.json();
-    // document.getElementById('rankings').innerHTML = JSON.stringify(data, null, 2);
     rankingsData = data;
     currentPage = 1;
     displayRankingsPage(1);
@@ -21,31 +21,48 @@ const fetchPerformance = async () => {
     const msRow = document.createElement('tr');
     msRow.innerHTML = `
         <td>MergeSort Time</td>
-        <td>${data.mergeSort}</td>`;
+        <td>${data.mergeSort} seconds</td>`;
 
     const qsRow = document.createElement('tr');
     qsRow.innerHTML = `
         <td>QuickSort Time</td>
-        <td>${data.quickSort}</td>`;
-        
+        <td>${data.quickSort} seconds</td>`;
+
+    let message = "";
+    let percentFaster = 0;
+    if (data.mergeSort < data.quickSort) {
+        message = "MergeSort was faster than QuickSort by ";
+        percentFaster = ((data.quickSort - data.mergeSort) / data.mergeSort) * 100;
+    } else {
+        message = "QuickSort was faster than MergeSort by ";
+        percentFaster = ((data.mergeSort - data.quickSort) / data.quickSort) * 100;
+    }
+    const fasterRow = document.createElement('tr');
+    fasterRow.innerHTML = `
+        <td>${message}</td>
+        <td>${percentFaster.toFixed(2)}%</td>`;
+    
     performanceDiv.appendChild(msRow);
     performanceDiv.appendChild(qsRow);
+    performanceDiv.appendChild(fasterRow);
+
 }
 
-
 function displayRankingsPage(page) {
-    const rankings = document.getElementById('rankings');
-    if (!rankings) {
+    const rankingsDiv = document.getElementById('rankings');
+    const pageSelectorDiv = document.getElementById('pageSelector');
+
+    if (!rankingsDiv) {
         console.error("Results not found");
         return;
     }
-    rankings.innerHTML = '';
+    rankingsDiv.innerHTML = '';
     const currentPageRankings = rankingsData.ranks.slice((currentPage - 1) * ranksPerPage, currentPage * ranksPerPage)
 
     const table = document.createElement('table');
     table.classList.add('rankings-table');
 
-    if (rankings.querySelector('table') === null) {
+    if (rankingsDiv.querySelector('table') === null) {
         const headers = ['Rank', 'Name', 'WCA ID', 'Sum of Ranks'];
         const thead = document.createElement('thead'); 
         const headerRow = document.createElement('tr');
@@ -56,7 +73,7 @@ function displayRankingsPage(page) {
         });
         thead.appendChild(headerRow);
         table.appendChild(thead);
-        rankings.appendChild(table);
+        rankingsDiv.appendChild(table);
     }
 
     const keys = ['rank', 'name', 'wcaId', 'sumOfRanks']
@@ -71,7 +88,11 @@ function displayRankingsPage(page) {
         tbody.appendChild(row);
     });
     table.appendChild(tbody);
-    rankings.replaceChild(table, rankings.querySelector('table'));
+    rankingsDiv.replaceChild(table, rankingsDiv.querySelector('table'));
+
+    if (rankingsDiv.innerHTML.trim() !== '') {
+        pageSelectorDiv.style.display = 'block';
+    }
 }
 
 function goToRankingsPage() {
@@ -81,4 +102,50 @@ function goToRankingsPage() {
       currentPage = selectedPage;
       displayRankingsPage(currentPage);
     }
-  }
+}
+
+
+const searchIdInput = document.querySelector('.search-container input[type="text"]');
+searchIdInput.addEventListener('input', handleSearch);
+
+function handleSearch(event) {
+    const searchId = event.target.value.trim().toLowerCase();
+    const rankingsDiv = document.getElementById('rankings');
+    pageSelectorDiv = document.getElementById('pageSelector');
+    rankingsDiv.innerHTML = '';
+    pageSelectorDiv.style.display = 'none';
+    if (searchId === '') {
+        currentPage = 1;
+        displayRankingsPage(1);
+        return;
+    }
+    const foundCuber = rankingsData.ranks.find(cuber => cuber.wcaId.toLowerCase().includes(searchId));
+    if (foundCuber) {
+        const table = document.createElement('table');
+        table.classList.add('rankings-table');
+        const headers = ['Rank', 'Name', 'WCA ID', 'Sum of Ranks'];
+        const thead = document.createElement('thead'); 
+        const headerRow = document.createElement('tr');
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+        rankings.appendChild(table);
+
+        const keys = ['rank', 'name', 'wcaId', 'sumOfRanks']
+        const tbody = document.createElement('tbody');
+        const row = document.createElement('tr');
+        keys.forEach(key => {
+            const td = document.createElement('td');
+            td.textContent = foundCuber[key];
+            row.appendChild(td);
+        });
+        tbody.appendChild(row);
+        table.appendChild(tbody);
+        rankingsDiv.appendChild(table);
+    }
+}
+
